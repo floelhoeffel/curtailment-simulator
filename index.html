@@ -400,66 +400,6 @@
     border-radius: 2px;
   }
 
-  /* ── Time simulation ── */
-  .time-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .time-btn {
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    cursor: pointer;
-    color: var(--text);
-    transition: all 0.15s;
-  }
-
-  .time-btn:hover { background: var(--surface-alt); }
-
-  .time-btn.running {
-    background: #059669;
-    color: white;
-    border-color: #059669;
-  }
-
-  .time-display {
-    font-size: 13px;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-secondary);
-  }
-
-  .energy-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .energy-cell {
-    background: var(--surface-alt);
-    border-radius: 6px;
-    padding: 6px 8px;
-    text-align: center;
-  }
-
-  .energy-cell .label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--text-secondary);
-    font-weight: 600;
-  }
-
-  .energy-cell .value {
-    font-size: 14px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
 
   /* ── Responsive ── */
   @media (max-width: 1200px) {
@@ -575,27 +515,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Time Simulation
-      </div>
-      <div class="card-body">
-        <div class="time-controls">
-          <button class="time-btn" id="time-toggle" onclick="toggleTime()">Play</button>
-          <button class="time-btn" onclick="resetTime()">Reset</button>
-          <span class="time-display" id="time-display">00:00 &mdash; 0.0 h elapsed</span>
-        </div>
-        <div class="energy-grid" id="energy-grid">
-          <div class="energy-cell"><div class="label">Generation</div><div class="value" id="e-gen" style="color:var(--solar)">0.00 kWh</div></div>
-          <div class="energy-cell"><div class="label">Consumption</div><div class="value" id="e-con" style="color:var(--load)">0.00 kWh</div></div>
-          <div class="energy-cell"><div class="label">Charge</div><div class="value" id="e-chg" style="color:var(--battery)">0.00 kWh</div></div>
-          <div class="energy-cell"><div class="label">Discharge</div><div class="value" id="e-dis" style="color:#a78bfa">0.00 kWh</div></div>
-          <div class="energy-cell"><div class="label">Import</div><div class="value" id="e-imp" style="color:var(--grid)">0.00 kWh</div></div>
-          <div class="energy-cell"><div class="label">Export</div><div class="value" id="e-exp" style="color:#60a5fa">0.00 kWh</div></div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ── Center: Diagram ── -->
@@ -712,7 +631,7 @@
           <div class="power-cell grid-export"><div class="label">Export</div><div class="value" id="p-exp">0.0</div><div class="unit">kW</div></div>
         </div>
         <div class="balance-bar-container" style="margin-top:14px">
-          <div class="balance-label-row"><span>Sources</span><span>Sinks</span></div>
+          <div class="balance-label-row"><span>Supply</span><span>Demand</span></div>
           <div style="display:flex;gap:6px">
             <div class="balance-bar" id="bar-sources" style="flex:1"></div>
             <div class="balance-bar" id="bar-sinks" style="flex:1"></div>
@@ -759,13 +678,6 @@ const state = {
   curtailmentLimit: 5,
 };
 
-// Energy accumulators (kWh)
-const energy = { generation: 0, consumption: 0, charge: 0, discharge: 0, import: 0, export: 0 };
-let simTime = 0; // seconds
-let simRunning = false;
-let simInterval = null;
-const SIM_SPEED = 60; // 1 real second = 60 simulated seconds (1 minute)
-const TICK_MS = 100;
 
 // ── Bind sliders ──
 function bindSlider(id, key, formatter) {
@@ -859,67 +771,6 @@ function syncSliders() {
   document.getElementById('curtailment-limit').value = state.curtailmentLimit;
 }
 
-// ── Time simulation ──
-function toggleTime() {
-  simRunning = !simRunning;
-  const btn = document.getElementById('time-toggle');
-  if (simRunning) {
-    btn.textContent = 'Pause';
-    btn.classList.add('running');
-    simInterval = setInterval(tick, TICK_MS);
-  } else {
-    btn.textContent = 'Play';
-    btn.classList.remove('running');
-    clearInterval(simInterval);
-  }
-}
-
-function resetTime() {
-  simTime = 0;
-  Object.keys(energy).forEach(k => energy[k] = 0);
-  updateTimeDisplay();
-  updateEnergyDisplay();
-}
-
-function tick() {
-  const dtHours = (SIM_SPEED * TICK_MS / 1000) / 3600; // convert sim-seconds to hours
-  simTime += SIM_SPEED * TICK_MS / 1000;
-  const result = calculate();
-  energy.generation += result.generation * dtHours;
-  energy.consumption += result.consumption * dtHours;
-  energy.charge += result.charge * dtHours;
-  energy.discharge += result.discharge * dtHours;
-  energy.import += result.gridImport * dtHours;
-  energy.export += result.gridExport * dtHours;
-
-  // Update battery SoC
-  const netBattery = (result.charge - result.discharge) * dtHours; // kWh
-  if (state.batteryCapacity > 0) {
-    state.batterySoC = Math.max(0, Math.min(100, state.batterySoC + (netBattery / state.batteryCapacity) * 100));
-    document.getElementById('battery-soc').value = state.batterySoC;
-  }
-
-  updateTimeDisplay();
-  updateEnergyDisplay();
-  update();
-}
-
-function updateTimeDisplay() {
-  const hours = Math.floor(simTime / 3600);
-  const mins = Math.floor((simTime % 3600) / 60);
-  const elapsed = (simTime / 3600).toFixed(1);
-  document.getElementById('time-display').innerHTML =
-    `${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')} &mdash; ${elapsed} h elapsed`;
-}
-
-function updateEnergyDisplay() {
-  document.getElementById('e-gen').textContent = energy.generation.toFixed(2) + ' kWh';
-  document.getElementById('e-con').textContent = energy.consumption.toFixed(2) + ' kWh';
-  document.getElementById('e-chg').textContent = energy.charge.toFixed(2) + ' kWh';
-  document.getElementById('e-dis').textContent = energy.discharge.toFixed(2) + ' kWh';
-  document.getElementById('e-imp').textContent = energy.import.toFixed(2) + ' kWh';
-  document.getElementById('e-exp').textContent = energy.export.toFixed(2) + ' kWh';
-}
 
 // ── Core calculation ──
 function calculate() {
@@ -1131,12 +982,12 @@ function updateAPIResponse(r) {
       },
       energy: {
         today: {
-          generation: parseFloat(energy.generation.toFixed(2)),
-          consumption: parseFloat(energy.consumption.toFixed(2)),
-          charge: parseFloat(energy.charge.toFixed(2)),
-          discharge: parseFloat(energy.discharge.toFixed(2)),
-          import: parseFloat(energy.import.toFixed(2)),
-          export: parseFloat(energy.export.toFixed(2)),
+          generation: 0,
+          consumption: 0,
+          charge: 0,
+          discharge: 0,
+          import: 0,
+          export: 0,
           unit: "kWh",
           lastUpdated: ts,
         }
