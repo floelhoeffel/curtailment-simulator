@@ -102,23 +102,23 @@ tailwind.config = {
   <!-- Left: Controls -->
   <div class="flex flex-col gap-5 max-xl:col-span-1">
 
-    <!-- PV & Household -->
+    <!-- Household -->
     <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
       <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        PV &amp; Household
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Household
       </div>
       <div class="p-4 space-y-4">
         <div>
           <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>Current PV Production</span>
+            <span>PV Production</span>
             <span class="font-semibold tabular-nums" id="pv-prod-val">7.0 kW</span>
           </div>
           <input type="range" id="pv-production" class="w-full slider-solar" min="0" max="10" step="0.1" value="7">
         </div>
         <div>
           <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>Household Load</span>
+            <span>Load</span>
             <span class="font-semibold tabular-nums" id="load-val">2.5 kW</span>
           </div>
           <input type="range" id="house-load" class="w-full slider-load" min="0" max="15" step="0.1" value="2.5">
@@ -133,48 +133,11 @@ tailwind.config = {
       </div>
     </div>
 
-    <!-- Battery -->
+    <!-- Inverter & Power Limits -->
     <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
       <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="12" height="18" rx="2"/><line x1="10" y1="1" x2="14" y2="1"/></svg>
-        Battery
-      </div>
-      <div class="p-4 space-y-4">
-        <div class="flex gap-1.5">
-          <button id="bat-self" class="bat-mode-btn active flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-gray-200 rounded-lg bg-white text-gray-500 text-center cursor-pointer transition hover:border-gray-300" onclick="setBatteryMode('SELF_RELIANCE')">Self<br>Reliance</button>
-          <button id="bat-import" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-gray-200 rounded-lg bg-white text-gray-500 text-center cursor-pointer transition hover:border-gray-300" onclick="setBatteryMode('IMPORT_FOCUS')">Import<br>Focus</button>
-          <button id="bat-export" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-gray-200 rounded-lg bg-white text-gray-500 text-center cursor-pointer transition hover:border-gray-300" onclick="setBatteryMode('EXPORT_FOCUS')">Export<br>Focus</button>
-          <button id="bat-idle" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-gray-200 rounded-lg bg-white text-gray-500 text-center cursor-pointer transition hover:border-gray-300" onclick="setBatteryMode('IDLE')">Idle</button>
-        </div>
-        <div>
-          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>State of Charge</span>
-            <span class="font-semibold tabular-nums" id="bat-soc-val">50%</span>
-          </div>
-          <input type="range" id="battery-soc" class="w-full slider-battery" min="0" max="100" step="1" value="50">
-        </div>
-        <div>
-          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>Max Charge Rate</span>
-            <span class="font-semibold tabular-nums" id="charge-rate-val">5.0 kW</span>
-          </div>
-          <input type="range" id="max-charge-rate" class="w-full slider-battery" min="0" max="10" step="0.5" value="5">
-        </div>
-        <div>
-          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>Max Discharge Rate</span>
-            <span class="font-semibold tabular-nums" id="discharge-rate-val">5.0 kW</span>
-          </div>
-          <input type="range" id="max-discharge-rate" class="w-full slider-battery" min="0" max="10" step="0.5" value="5">
-        </div>
-      </div>
-    </div>
-
-    <!-- Power Limits -->
-    <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
-      <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Power Limits
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Inverter &amp; Power Limits
       </div>
       <div class="p-4 space-y-4">
         <div>
@@ -208,10 +171,84 @@ tailwind.config = {
         </div>
       </div>
     </div>
+
+    <!-- Battery -->
+    <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
+      <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="12" height="18" rx="2"/><line x1="10" y1="1" x2="14" y2="1"/></svg>
+        Battery
+      </div>
+      <div class="p-4 space-y-4">
+        <div class="flex gap-1.5">
+          <button id="bat-self" class="bat-mode-btn active flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('SELF_RELIANCE')">Self<br>Reliance</button>
+          <button id="bat-import" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('IMPORT_FOCUS')">Import<br>Focus</button>
+          <button id="bat-export" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('EXPORT_FOCUS')">Export<br>Focus</button>
+          <button id="bat-idle" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('IDLE')">Idle</button>
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
+            <span>State of Charge</span>
+            <span class="font-semibold tabular-nums" id="bat-soc-val">50%</span>
+          </div>
+          <input type="range" id="battery-soc" class="w-full slider-battery" min="0" max="100" step="1" value="50">
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
+            <span>Max Charge Rate</span>
+            <span class="font-semibold tabular-nums" id="charge-rate-val">5.0 kW</span>
+          </div>
+          <input type="range" id="max-charge-rate" class="w-full slider-battery" min="0" max="10" step="0.5" value="5">
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
+            <span>Max Discharge Rate</span>
+            <span class="font-semibold tabular-nums" id="discharge-rate-val">5.0 kW</span>
+          </div>
+          <input type="range" id="max-discharge-rate" class="w-full slider-battery" min="0" max="10" step="0.5" value="5">
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Center: Diagram -->
   <div class="flex flex-col gap-5 max-xl:col-span-1">
+
+    <!-- Power Balance -->
+    <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
+      <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Power Balance
+      </div>
+      <div class="p-4 space-y-4">
+        <!-- Grid Position Spectrum -->
+        <div class="text-center">
+          <div class="text-3xl font-bold tabular-nums" id="net-value">4.5</div>
+          <div class="text-xs text-lime-600" id="net-label">kW exporting to grid</div>
+        </div>
+        <div>
+          <div class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-lime-500 mb-1">
+            <span>Export</span>
+            <span>Import</span>
+          </div>
+          <div class="relative h-6 bg-lime-200 rounded-full">
+            <div class="absolute top-0 bottom-0 w-px bg-lime-400 z-10" id="spec-zero"></div>
+            <div class="absolute top-1 bottom-1 rounded-full transition-all duration-200" id="spec-fill"></div>
+            <div class="absolute -top-1 -bottom-1 w-1 rounded-full transition-all duration-200 hidden" id="spec-ghost"></div>
+            <div class="absolute -top-1 -bottom-1 w-3.5 rounded-full bg-enode-forest border-2 border-white shadow-md transition-all duration-200" id="spec-current"></div>
+          </div>
+          <div class="relative h-4">
+            <div class="absolute text-[9px] text-lime-500 font-medium -translate-x-1/2 mt-0.5" id="spec-zero-label">0</div>
+          </div>
+          <div id="spec-impact" class="text-center text-[11px] text-lime-600 min-h-[16px]"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden elements for JS compatibility -->
+    <div class="hidden">
+      <span id="p-gen"></span><span id="p-con"></span><span id="p-chg"></span>
+      <span id="p-dis"></span><span id="p-imp"></span><span id="p-exp"></span>
+    </div>
 
     <!-- Energy Flow Diagram -->
     <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
@@ -281,92 +318,23 @@ tailwind.config = {
           <text x="300" y="400" text-anchor="middle" font-size="11" fill="#A1A184" id="balance-eq"></text>
         </svg>
       </div>
-    </div>
-
-    <!-- Power Balance -->
-    <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
-      <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        Power Balance
-      </div>
-      <div class="p-4 space-y-4">
-        <!-- Grid Position Spectrum -->
-        <div class="text-center">
-          <div class="text-3xl font-bold tabular-nums" id="net-value">4.5</div>
-          <div class="text-xs text-lime-600" id="net-label">kW exporting to grid</div>
+      <!-- Balance bars inside energy flow card -->
+      <div class="px-4 pb-4 pt-0">
+        <div class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-lime-600 mb-1">
+          <span>Supply</span><span>Demand</span>
         </div>
-        <div>
-          <div class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-lime-500 mb-1">
-            <span>Export</span>
-            <span>Import</span>
-          </div>
-          <div class="relative h-6 bg-lime-200 rounded-full">
-            <div class="absolute top-0 bottom-0 w-px bg-lime-400 z-10" id="spec-zero"></div>
-            <div class="absolute top-1 bottom-1 rounded-full transition-all duration-200" id="spec-fill"></div>
-            <div class="absolute -top-1 -bottom-1 w-1 rounded-full transition-all duration-200 hidden" id="spec-ghost"></div>
-            <div class="absolute -top-1 -bottom-1 w-3.5 rounded-full bg-enode-forest border-2 border-white shadow-md transition-all duration-200" id="spec-current"></div>
-          </div>
-          <div class="relative h-4">
-            <div class="absolute text-[9px] text-lime-500 font-medium -translate-x-1/2 mt-0.5" id="spec-zero-label">0</div>
-          </div>
-          <div id="spec-impact" class="text-center text-[11px] text-lime-600 min-h-[16px]"></div>
+        <div class="flex gap-1.5">
+          <div class="flex-1 h-7 flex rounded-md overflow-hidden bg-lime-200" id="bar-sources"></div>
+          <div class="flex-1 h-7 flex rounded-md overflow-hidden bg-lime-200" id="bar-sinks"></div>
         </div>
-
-        <!-- Separator -->
-        <div class="border-t border-lime-200"></div>
-
-        <!-- Power numbers -->
-        <div class="grid grid-cols-3 gap-2">
-          <div class="bg-lime-100 rounded-lg p-2 text-center">
-            <div class="text-[10px] uppercase tracking-wide text-lime-600 font-semibold">Generation</div>
-            <div class="text-lg font-bold tabular-nums text-enode-leaf" id="p-gen">7.0</div>
-            <div class="text-xs text-lime-500">kW</div>
-          </div>
-          <div class="bg-lime-100 rounded-lg p-2 text-center">
-            <div class="text-[10px] uppercase tracking-wide text-lime-600 font-semibold">Consumption</div>
-            <div class="text-lg font-bold tabular-nums text-enode-fire" id="p-con">2.5</div>
-            <div class="text-xs text-lime-500">kW</div>
-          </div>
-          <div class="bg-lime-100 rounded-lg p-2 text-center">
-            <div class="text-[10px] uppercase tracking-wide text-lime-600 font-semibold">Charge</div>
-            <div class="text-lg font-bold tabular-nums text-enode-lavender" id="p-chg">0.0</div>
-            <div class="text-xs text-lime-500">kW</div>
-          </div>
-          <div class="bg-lime-100 rounded-lg p-2 text-center">
-            <div class="text-[10px] uppercase tracking-wide text-lime-600 font-semibold">Discharge</div>
-            <div class="text-lg font-bold tabular-nums text-enode-lavender" id="p-dis">0.0</div>
-            <div class="text-xs text-lime-500">kW</div>
-          </div>
-          <div class="bg-lime-100 rounded-lg p-2 text-center">
-            <div class="text-[10px] uppercase tracking-wide text-lime-600 font-semibold">Import</div>
-            <div class="text-lg font-bold tabular-nums text-enode-slate" id="p-imp">0.0</div>
-            <div class="text-xs text-lime-500">kW</div>
-          </div>
-          <div class="bg-lime-100 rounded-lg p-2 text-center">
-            <div class="text-[10px] uppercase tracking-wide text-lime-600 font-semibold">Export</div>
-            <div class="text-lg font-bold tabular-nums text-enode-slate-lt" id="p-exp">0.0</div>
-            <div class="text-xs text-lime-500">kW</div>
-          </div>
-        </div>
-
-        <!-- Balance bars -->
-        <div>
-          <div class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-lime-600 mb-1">
-            <span>Supply</span><span>Demand</span>
-          </div>
-          <div class="flex gap-1.5">
-            <div class="flex-1 h-7 flex rounded-md overflow-hidden bg-lime-200" id="bar-sources"></div>
-            <div class="flex-1 h-7 flex rounded-md overflow-hidden bg-lime-200" id="bar-sinks"></div>
-          </div>
-          <div class="flex flex-wrap gap-2.5 mt-2 text-[10px] text-lime-600">
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-leaf"></div>Solar</div>
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-lavender"></div>Discharge</div>
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-slate"></div>Import</div>
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-fire"></div>Load</div>
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm" style="background:#9A8BD6"></div>Charge</div>
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-slate-lt"></div>Export</div>
-            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-terracotta"></div>Curtailed</div>
-          </div>
+        <div class="flex flex-wrap gap-2.5 mt-2 text-[10px] text-lime-600">
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-leaf"></div>Solar</div>
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-lavender"></div>Discharge</div>
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-slate"></div>Import</div>
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-fire"></div>Load</div>
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm" style="background:#9A8BD6"></div>Charge</div>
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-slate-lt"></div>Export</div>
+          <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-sm bg-enode-terracotta"></div>Curtailed</div>
         </div>
       </div>
     </div>
