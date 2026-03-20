@@ -638,23 +638,27 @@ function updateAPIResponse(r) {
       "meter:read:location",
     ],
     status: {
-      powerLimits: {
-        generation: parseFloat((state.genLimitEnabled ? state.genLimit : state.pvCapacity).toFixed(1)),
-        export: parseFloat((state.exportLimitEnabled ? state.exportLimit : state.pvCapacity).toFixed(1)),
-        unit: "kW",
-        lastUpdated: ts,
-      },
       power: {
-        generation: parseFloat(r.generation.toFixed(2)), consumption: parseFloat(r.consumption.toFixed(2)),
-        import: parseFloat(r.gridImport.toFixed(2)), export: parseFloat(r.gridExport.toFixed(2)),
-        charge: parseFloat(r.charge.toFixed(2)), discharge: parseFloat(r.discharge.toFixed(2)),
-        unit: "kW", lastUpdated: ts,
+        limits: {
+          generation: parseFloat((state.genLimitEnabled ? state.genLimit : state.pvCapacity).toFixed(1)),
+          export: parseFloat((state.exportLimitEnabled ? state.exportLimit : state.pvCapacity).toFixed(1)),
+          unit: "kW",
+          lastUpdated: ts,
+        },
+        now: {
+          generation: parseFloat(r.generation.toFixed(2)), consumption: parseFloat(r.consumption.toFixed(2)),
+          import: parseFloat(r.gridImport.toFixed(2)), export: parseFloat(r.gridExport.toFixed(2)),
+          charge: parseFloat(r.charge.toFixed(2)), discharge: parseFloat(r.discharge.toFixed(2)),
+          unit: "kW", lastUpdated: ts,
+        },
       },
       energy: { today: { "...": "..." } },
     },
     capabilities: {
       setGenerationLimit: { isCapable: true, interventionIds: [], allowedRange: { kW: { min: 0, max: parseFloat(state.pvCapacity.toFixed(1)) } } },
       setExportLimit: { isCapable: true, interventionIds: [], allowedRange: { kW: { min: 0, max: parseFloat(state.pvCapacity.toFixed(1)) } } },
+      statistics: { isCapable: true, interventionIds: [], intervals: ["DAY", "MONTH", "YEAR"] },
+      status: { isCapable: true, interventionIds: [] },
     }
   };
   document.getElementById('api-response').innerHTML = syntaxHighlight(json);
