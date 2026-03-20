@@ -76,13 +76,10 @@ tailwind.config = {
   .segment.export { background: #B9BCC5; color: #353327; }
   .segment.curtailed { background: #A03F16; }
 
-  /* Battery mode button states */
-  .bat-mode-btn.active { border-color: #5D770D; background: #F7F7EE; color: #5D770D; }
+  /* Mode button states */
+  .mode-btn.active { border-color: #5D770D; background: #F7F7EE; color: #5D770D; }
 
-  /* Limit slider disabled state */
-  .limit-slider.disabled { opacity: 0.3; pointer-events: none; }
-
-  /* API syntax highlighting */
+/* API syntax highlighting */
   .api-response .key { color: #5D770D; }
   .api-response .string { color: #184602; }
   .api-response .number { color: #E3732D; }
@@ -111,17 +108,23 @@ tailwind.config = {
       <div class="p-4 space-y-4">
         <div>
           <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>PV Production</span>
-            <span class="font-semibold tabular-nums" id="pv-prod-val">7.0 kW</span>
-          </div>
-          <input type="range" id="pv-production" class="w-full slider-solar" min="0" max="10" step="0.1" value="7">
-        </div>
-        <div>
-          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
-            <span>Load</span>
+            <span>Consumption</span>
             <span class="font-semibold tabular-nums" id="load-val">2.5 kW</span>
           </div>
           <input type="range" id="house-load" class="w-full slider-load" min="0" max="15" step="0.1" value="2.5">
+        </div>
+        <div>
+          <div class="flex justify-between text-[10px] font-semibold uppercase tracking-wide text-lime-500 mb-1.5">
+            <span>Flexibility Presets</span>
+            <span>min grid ← → max grid</span>
+          </div>
+          <div class="flex gap-1.5">
+            <button id="mode-maxdemand" class="mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setFlexMode('MAX_DEMAND')">Max<br>Demand</button>
+            <button id="mode-self" class="mode-btn active flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setFlexMode('SELF_SUFFICIENT')">Self-<br>Sufficient</button>
+            <button id="mode-balanced" class="mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setFlexMode('BALANCED')">Balanced</button>
+            <button id="mode-absorb" class="mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setFlexMode('ABSORB')">Absorb</button>
+            <button id="mode-feedin" class="mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setFlexMode('FEED_IN')">Feed-In</button>
+          </div>
         </div>
         <div class="flex flex-wrap gap-1.5 pt-1">
           <button class="text-xs px-2.5 py-1 rounded-md border border-lime-300 bg-lime-100 text-lime-700 font-medium hover:bg-lime-300 hover:text-lime-900 transition" onclick="applyPreset('sunny')">Sunny Day</button>
@@ -133,34 +136,33 @@ tailwind.config = {
       </div>
     </div>
 
-    <!-- Inverter & Power Limits -->
+    <!-- Inverter -->
     <div class="bg-white rounded-xl border border-lime-300 overflow-hidden">
       <div class="px-4 py-3.5 border-b border-lime-200 font-semibold text-xs uppercase tracking-wide text-lime-600 flex items-center gap-2">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Inverter &amp; Power Limits
+        Inverter
       </div>
       <div class="p-4 space-y-4">
         <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="flex items-center gap-2 text-sm font-medium cursor-pointer">
-              <input type="checkbox" id="gen-limit-enabled" class="w-4 h-4 accent-enode-terracotta" onchange="toggleGenLimit()">
-              Generation Limit
-              <span id="gen-limit-badge" class="hidden text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-enode-sunset text-enode-terracotta">Curtailing</span>
-            </label>
-            <span class="font-semibold tabular-nums text-sm" id="gen-limit-val">5.0 kW</span>
+          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
+            <span>Generation</span>
+            <span class="font-semibold tabular-nums" id="pv-prod-val">7.0 kW</span>
           </div>
-          <input type="range" id="gen-limit-slider" class="w-full transition-opacity opacity-30" min="0" max="10" step="0.1" value="5" disabled>
+          <input type="range" id="pv-production" class="w-full slider-solar" min="0" max="10" step="0.1" value="7">
         </div>
         <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="flex items-center gap-2 text-sm font-medium cursor-pointer">
-              <input type="checkbox" id="export-limit-enabled" class="w-4 h-4 accent-enode-terracotta" onchange="toggleExportLimit()">
-              Export Limit
-              <span id="export-limit-badge" class="hidden text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-enode-sunset text-enode-terracotta">Curtailing</span>
-            </label>
-            <span class="font-semibold tabular-nums text-sm" id="export-limit-val">5.0 kW</span>
+          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
+            <span>Generation Limit <span id="gen-limit-badge" class="hidden text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-enode-sunset text-enode-terracotta">Curtailing</span></span>
+            <span class="font-semibold tabular-nums" id="gen-limit-val">10.0 kW</span>
           </div>
-          <input type="range" id="export-limit-slider" class="w-full transition-opacity opacity-30" min="0" max="10" step="0.1" value="5" disabled>
+          <input type="range" id="gen-limit-slider" class="w-full" min="0" max="10" step="0.1" value="10">
+        </div>
+        <div>
+          <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
+            <span>Export Limit <span id="export-limit-badge" class="hidden text-[10px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-enode-sunset text-enode-terracotta">Curtailing</span></span>
+            <span class="font-semibold tabular-nums" id="export-limit-val">10.0 kW</span>
+          </div>
+          <input type="range" id="export-limit-slider" class="w-full" min="0" max="10" step="0.1" value="10">
         </div>
         <div class="flex flex-wrap gap-1.5 pt-1">
           <button class="text-xs px-2.5 py-1 rounded-md border border-lime-300 bg-lime-100 text-lime-700 font-medium hover:bg-lime-300 hover:text-lime-900 transition" onclick="applyScenario('zero-export')">Zero Export</button>
@@ -179,12 +181,6 @@ tailwind.config = {
         Battery
       </div>
       <div class="p-4 space-y-4">
-        <div class="flex gap-1.5">
-          <button id="bat-self" class="bat-mode-btn active flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('SELF_RELIANCE')">Self<br>Reliance</button>
-          <button id="bat-import" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('IMPORT_FOCUS')">Import<br>Focus</button>
-          <button id="bat-export" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('EXPORT_FOCUS')">Export<br>Focus</button>
-          <button id="bat-idle" class="bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400" onclick="setBatteryMode('IDLE')">Idle</button>
-        </div>
         <div>
           <div class="flex justify-between items-baseline mb-1.5 text-sm font-medium">
             <span>State of Charge</span>
@@ -359,9 +355,8 @@ const state = {
   pvCapacity: 10, pvProduction: 7, load: 2.5,
   batteryCapacity: 10, batterySoC: 50,
   maxChargeRate: 5, maxDischargeRate: 5,
-  batteryMode: 'SELF_RELIANCE',
-  genLimitEnabled: false, genLimit: 5,
-  exportLimitEnabled: false, exportLimit: 5,
+  flexMode: 'SELF_SUFFICIENT',
+  genLimit: 10, exportLimit: 10,
 };
 
 function bindSlider(id, key) {
@@ -380,29 +375,26 @@ bindSlider('max-discharge-rate', 'maxDischargeRate');
 document.getElementById('gen-limit-slider').addEventListener('input', (e) => { state.genLimit = parseFloat(e.target.value); update(); });
 document.getElementById('export-limit-slider').addEventListener('input', (e) => { state.exportLimit = parseFloat(e.target.value); update(); });
 
-function toggleGenLimit() {
-  state.genLimitEnabled = document.getElementById('gen-limit-enabled').checked;
-  const slider = document.getElementById('gen-limit-slider');
-  slider.disabled = !state.genLimitEnabled;
-  slider.classList.toggle('opacity-30', !state.genLimitEnabled);
-  update();
-}
 
-function toggleExportLimit() {
-  state.exportLimitEnabled = document.getElementById('export-limit-enabled').checked;
-  const slider = document.getElementById('export-limit-slider');
-  slider.disabled = !state.exportLimitEnabled;
-  slider.classList.toggle('opacity-30', !state.exportLimitEnabled);
-  update();
-}
+const modeBtnBase = 'mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400';
+const flexPresets = {
+  MAX_DEMAND:         { genLimit: 0, exportLimit: 0, maxChargeRate: 5, maxDischargeRate: 0 },
+  SELF_SUFFICIENT: { genLimit: 10, exportLimit: 10, maxChargeRate: 5, maxDischargeRate: 5 },
+  BALANCED:        { genLimit: 10, exportLimit: 10, maxChargeRate: 0, maxDischargeRate: 0 },
+  ABSORB:          { genLimit: 10, exportLimit: 0, maxChargeRate: 5, maxDischargeRate: 0 },
+  FEED_IN:         { genLimit: 10, exportLimit: 10, maxChargeRate: 0, maxDischargeRate: 5 },
+};
 
-const batBtnBase = 'bat-mode-btn flex-1 py-2 px-1 text-[10px] font-semibold border-2 border-lime-300 rounded-lg bg-white text-lime-600 text-center cursor-pointer transition hover:border-lime-400';
-function setBatteryMode(mode) {
-  state.batteryMode = mode;
-  document.getElementById('bat-self').className = batBtnBase + (mode === 'SELF_RELIANCE' ? ' active' : '');
-  document.getElementById('bat-import').className = batBtnBase + (mode === 'IMPORT_FOCUS' ? ' active' : '');
-  document.getElementById('bat-export').className = batBtnBase + (mode === 'EXPORT_FOCUS' ? ' active' : '');
-  document.getElementById('bat-idle').className = batBtnBase + (mode === 'IDLE' ? ' active' : '');
+function setFlexMode(mode) {
+  state.flexMode = mode;
+  const preset = flexPresets[mode];
+  if (preset) Object.assign(state, preset);
+  document.getElementById('mode-maxdemand').className = modeBtnBase + (mode === 'MAX_DEMAND' ? ' active' : '');
+  document.getElementById('mode-self').className = modeBtnBase + (mode === 'SELF_SUFFICIENT' ? ' active' : '');
+  document.getElementById('mode-balanced').className = modeBtnBase + (mode === 'BALANCED' ? ' active' : '');
+  document.getElementById('mode-absorb').className = modeBtnBase + (mode === 'ABSORB' ? ' active' : '');
+  document.getElementById('mode-feedin').className = modeBtnBase + (mode === 'FEED_IN' ? ' active' : '');
+  syncSliders();
   update();
 }
 
@@ -422,11 +414,11 @@ function applyPreset(name) {
 }
 
 function applyScenario(name) {
-  if (name === 'zero-export') { state.exportLimitEnabled = true; state.exportLimit = 0; }
-  else if (name === 'half-gen') { state.genLimitEnabled = true; state.genLimit = state.pvCapacity / 2; }
-  else if (name === 'shutoff') { state.genLimitEnabled = true; state.genLimit = 0; }
-  else if (name === 'soft-export') { state.exportLimitEnabled = true; state.exportLimit = 3; }
-  else if (name === 'clear') { state.genLimitEnabled = false; state.exportLimitEnabled = false; }
+  if (name === 'zero-export') { state.exportLimit = 0; }
+  else if (name === 'half-gen') { state.genLimit = state.pvCapacity / 2; }
+  else if (name === 'shutoff') { state.genLimit = 0; }
+  else if (name === 'soft-export') { state.exportLimit = 3; }
+  else if (name === 'clear') { state.genLimit = state.pvCapacity; state.exportLimit = state.pvCapacity; }
   syncSliders();
   update();
 }
@@ -437,14 +429,8 @@ function syncSliders() {
   document.getElementById('battery-soc').value = state.batterySoC;
   document.getElementById('max-charge-rate').value = state.maxChargeRate;
   document.getElementById('max-discharge-rate').value = state.maxDischargeRate;
-  document.getElementById('gen-limit-enabled').checked = state.genLimitEnabled;
   document.getElementById('gen-limit-slider').value = state.genLimit;
-  document.getElementById('gen-limit-slider').disabled = !state.genLimitEnabled;
-  document.getElementById('gen-limit-slider').classList.toggle('opacity-30', !state.genLimitEnabled);
-  document.getElementById('export-limit-enabled').checked = state.exportLimitEnabled;
   document.getElementById('export-limit-slider').value = state.exportLimit;
-  document.getElementById('export-limit-slider').disabled = !state.exportLimitEnabled;
-  document.getElementById('export-limit-slider').classList.toggle('opacity-30', !state.exportLimitEnabled);
 }
 
 function calculate() {
@@ -456,23 +442,29 @@ function calculate() {
   const maxDischarge = state.batterySoC <= 0 ? 0 : state.maxDischargeRate;
 
   // ── Step 1: Apply generation limit ──
-  if (state.genLimitEnabled) {
-    effectiveGeneration = Math.min(pvAvailable, state.genLimit);
-    curtailed = pvAvailable - effectiveGeneration;
-  }
+  effectiveGeneration = Math.min(pvAvailable, state.genLimit);
+  curtailed = pvAvailable - effectiveGeneration;
 
   // ── Step 2: Determine battery behavior based on mode ──
   let generation = effectiveGeneration, consumption = state.load;
   let charge = 0, discharge = 0, gridImport = 0, gridExport = 0;
 
-  if (state.batteryMode === 'IDLE') {
-    // Battery does nothing
+  if (state.flexMode === 'MAX_DEMAND') {
+    // Curtail all solar, charge battery from grid, load from grid
+    curtailed += effectiveGeneration;
+    effectiveGeneration = 0;
+    generation = 0;
+    charge = maxCharge;
+    gridImport = consumption + charge;
+
+  } else if (state.flexMode === 'BALANCED') {
+    // Battery does nothing — passive grid participant
     let net = generation - consumption;
     if (net >= 0) { gridExport = net; }
     else { gridImport = -net; }
 
-  } else if (state.batteryMode === 'IMPORT_FOCUS') {
-    // Charge at max rate. PV serves load first, then battery, shortfall from grid.
+  } else if (state.flexMode === 'ABSORB') {
+    // Charge at max rate from grid — household becomes grid sink
     charge = maxCharge;
     let pvAfterLoad = Math.max(0, generation - consumption);
     let pvToCharge = Math.min(pvAfterLoad, charge);
@@ -481,8 +473,8 @@ function calculate() {
     gridImport = loadFromGrid + gridToCharge;
     gridExport = Math.max(0, pvAfterLoad - pvToCharge);
 
-  } else if (state.batteryMode === 'EXPORT_FOCUS') {
-    // Discharge at max rate. Battery + PV serve load, rest goes to grid.
+  } else if (state.flexMode === 'FEED_IN') {
+    // Discharge to grid — household becomes grid source
     discharge = maxDischarge;
     let totalSupply = generation + discharge;
     let net = totalSupply - consumption;
@@ -490,7 +482,7 @@ function calculate() {
     else { gridImport = -net; }
 
   } else {
-    // SELF_RELIANCE: PV → Load → Battery → Grid. Deficit: Battery → Grid Import.
+    // SELF_SUFFICIENT: minimize grid. PV → Load → Battery → Grid.
     let surplus = generation - consumption;
     if (surplus >= 0) {
       charge = Math.min(surplus, maxCharge);
@@ -504,13 +496,13 @@ function calculate() {
 
   // ── Step 3: Apply export limit ──
   // Export limit caps grid export; if we'd export more, absorb into battery or curtail
-  if (state.exportLimitEnabled) {
+  {
     if (gridExport > state.exportLimit) {
       let excessExport = gridExport - state.exportLimit;
       gridExport = state.exportLimit;
 
       // Try to absorb excess into battery first (for modes that allow it)
-      if (state.batteryMode !== 'IDLE' && state.batteryMode !== 'EXPORT_FOCUS') {
+      if (state.flexMode !== 'BALANCED' && state.flexMode !== 'FEED_IN') {
         let extraCharge = Math.min(excessExport, maxCharge - charge);
         charge += extraCharge;
         excessExport -= extraCharge;
@@ -539,8 +531,8 @@ function update() {
   document.getElementById('gen-limit-val').textContent = state.genLimit.toFixed(1) + ' kW';
   document.getElementById('export-limit-val').textContent = state.exportLimit.toFixed(1) + ' kW';
 
-  const genCurtailing = state.genLimitEnabled && state.genLimit < state.pvCapacity;
-  const exportCurtailing = state.exportLimitEnabled && state.exportLimit < state.pvCapacity;
+  const genCurtailing = state.genLimit < state.pvCapacity;
+  const exportCurtailing = state.exportLimit < state.pvCapacity;
   document.getElementById('gen-limit-badge').classList.toggle('hidden', !genCurtailing);
   document.getElementById('export-limit-badge').classList.toggle('hidden', !exportCurtailing);
 
@@ -562,8 +554,8 @@ function update() {
   else { document.getElementById('node-grid-val').textContent = r.gridImport.toFixed(1); document.getElementById('node-grid-dir').textContent = 'kW import'; }
 
   const limitsActive = [];
-  if (state.genLimitEnabled) limitsActive.push('Gen: ' + state.genLimit.toFixed(1) + ' kW');
-  if (state.exportLimitEnabled) limitsActive.push('Exp: ' + state.exportLimit.toFixed(1) + ' kW');
+  if (state.genLimit < state.pvCapacity) limitsActive.push('Gen: ' + state.genLimit.toFixed(1) + ' kW');
+  if (state.exportLimit < state.pvCapacity) limitsActive.push('Exp: ' + state.exportLimit.toFixed(1) + ' kW');
   if (limitsActive.length === 0) { document.getElementById('node-inverter-state').textContent = 'No limits active'; document.getElementById('node-inverter-limit').textContent = ''; }
   else { document.getElementById('node-inverter-state').textContent = 'Limits active'; document.getElementById('node-inverter-limit').textContent = limitsActive.join(' | '); }
 
@@ -612,6 +604,8 @@ function updateBalanceBars(r) {
     (r.curtailed > 0.01 ? `<div class="segment curtailed" style="width:${pct(r.curtailed)}">${seg(r.curtailed)}</div>` : '');
 }
 
+const flexToBatteryMode = { MAX_DEMAND: 'IMPORT_FOCUS', SELF_SUFFICIENT: 'SELF_RELIANCE', BALANCED: 'IDLE', ABSORB: 'IMPORT_FOCUS', FEED_IN: 'EXPORT_FOCUS' };
+
 function updateAPIResponse(r) {
   const ts = new Date().toISOString();
   const json = {
@@ -632,8 +626,8 @@ function updateAPIResponse(r) {
     status: {
       power: {
         limits: {
-          generation: parseFloat((state.genLimitEnabled ? state.genLimit : state.pvCapacity).toFixed(1)),
-          export: parseFloat((state.exportLimitEnabled ? state.exportLimit : state.pvCapacity).toFixed(1)),
+          generation: parseFloat(state.genLimit.toFixed(1)),
+          export: parseFloat(state.exportLimit.toFixed(1)),
           unit: "kW",
           lastUpdated: ts,
         },
@@ -644,6 +638,11 @@ function updateAPIResponse(r) {
           unit: "kW", lastUpdated: ts,
         },
       },
+      battery: {
+          operationMode: flexToBatteryMode[state.flexMode],
+          stateOfCharge: parseFloat((state.batterySoC).toFixed(1)),
+          capacityKwh: state.batteryCapacity,
+        },
       energy: { today: { "...": "..." } },
     },
     capabilities: {
@@ -660,13 +659,13 @@ function updateAPIResponse(r) {
 function updateGridSpectrum(r) {
   const current = r.gridImport - r.gridExport; // positive = import, negative = export
 
-  // Calculate uncurtailed: temporarily disable limits
-  const savedGen = state.genLimitEnabled, savedExp = state.exportLimitEnabled;
-  state.genLimitEnabled = false;
-  state.exportLimitEnabled = false;
+  // Calculate uncurtailed: temporarily set limits to max
+  const savedGen = state.genLimit, savedExp = state.exportLimit;
+  state.genLimit = state.pvCapacity;
+  state.exportLimit = state.pvCapacity;
   const u = calculate();
-  state.genLimitEnabled = savedGen;
-  state.exportLimitEnabled = savedExp;
+  state.genLimit = savedGen;
+  state.exportLimit = savedExp;
   const uncurtailed = u.gridImport - u.gridExport;
 
   // Dynamic range centered on zero
@@ -701,7 +700,7 @@ function updateGridSpectrum(r) {
   document.getElementById('spec-current').style.left = 'calc(' + currentPct + '% - 8px)';
 
   // Ghost marker: show when limits are active
-  const hasLimits = savedGen || savedExp;
+  const hasLimits = savedGen < state.pvCapacity || savedExp < state.pvCapacity;
   const ghost = document.getElementById('spec-ghost');
   if (hasLimits) {
     ghost.style.left = 'calc(' + uncurtPct + '% - 2px)';
