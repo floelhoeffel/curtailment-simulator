@@ -604,53 +604,66 @@ function updateBalanceBars(r) {
     (r.curtailed > 0.01 ? `<div class="segment curtailed" style="width:${pct(r.curtailed)}">${seg(r.curtailed)}</div>` : '');
 }
 
-const flexToBatteryMode = { MAX_DEMAND: 'IMPORT_FOCUS', SELF_SUFFICIENT: 'SELF_RELIANCE', BALANCED: 'IDLE', ABSORB: 'IMPORT_FOCUS', FEED_IN: 'EXPORT_FOCUS' };
-
 function updateAPIResponse(r) {
   const ts = new Date().toISOString();
+  const pvCapacity = parseFloat(state.pvCapacity.toFixed(1));
   const json = {
     id: "54d827e1-8355-4fed-97b5-55940d1d09ba",
+    userId: "4f6fecd0-bdae-49be-b6e8-ee442e1e3da9",
+    locationId: "8d90101b-3f2f-462a-bbb4-1ed320d33bbe",
     vendor: "ENPHASE",
     lastSeen: ts,
     isReachable: true,
-    scopes: [
-      "inverter:read:data",
-      "inverter:read:location",
-      "inverter:control:power_limits",
-      "battery:read:data",
-      "battery:read:location",
-      "battery:control:operation_mode",
-      "meter:read:data",
-      "meter:read:location",
-    ],
+    information: {
+      displayName: "My Solar Terrace",
+      installationDate: "2020-04-07T17:04:26Z",
+      latitude: 59.9173985,
+      longitude: 10.7197486,
+      address: "123 Main St, Springfield, IL 62701",
+      timezone: "Europe/Oslo",
+      lastUpdated: "2020-04-07T17:04:26Z",
+    },
     status: {
+      limits: {
+        generation: parseFloat(state.genLimit.toFixed(1)),
+        export: parseFloat(state.exportLimit.toFixed(1)),
+        charge: parseFloat(state.maxChargeRate.toFixed(1)),
+        discharge: parseFloat(state.maxDischargeRate.toFixed(1)),
+        minBatteryLevel: null,
+        maxBatteryLevel: null,
+        lastUpdated: ts,
+      },
       power: {
-        limits: {
-          generation: parseFloat(state.genLimit.toFixed(1)),
-          export: parseFloat(state.exportLimit.toFixed(1)),
-          unit: "kW",
-          lastUpdated: ts,
-        },
-        now: {
-          generation: parseFloat(r.generation.toFixed(2)), consumption: parseFloat(r.consumption.toFixed(2)),
-          import: parseFloat(r.gridImport.toFixed(2)), export: parseFloat(r.gridExport.toFixed(2)),
-          charge: parseFloat(r.charge.toFixed(2)), discharge: parseFloat(r.discharge.toFixed(2)),
-          unit: "kW", lastUpdated: ts,
-        },
+        generation: parseFloat(r.generation.toFixed(2)),
+        consumption: parseFloat(r.consumption.toFixed(2)),
+        import: parseFloat(r.gridImport.toFixed(2)),
+        export: parseFloat(r.gridExport.toFixed(2)),
+        charge: parseFloat(r.charge.toFixed(2)),
+        discharge: parseFloat(r.discharge.toFixed(2)),
+        lastUpdated: ts,
       },
       battery: {
-          operationMode: flexToBatteryMode[state.flexMode],
-          stateOfCharge: parseFloat((state.batterySoC).toFixed(1)),
-          capacityKwh: state.batteryCapacity,
-        },
+        capacity: state.batteryCapacity,
+        level: parseFloat((state.batterySoC).toFixed(1)),
+      },
       energy: { today: { "...": "..." } },
     },
     capabilities: {
-      setGenerationLimit: { isCapable: true, interventionIds: [], allowedRange: { kW: { min: 0, max: parseFloat(state.pvCapacity.toFixed(1)) } } },
-      setExportLimit: { isCapable: true, interventionIds: [], allowedRange: { kW: { min: 0, max: parseFloat(state.pvCapacity.toFixed(1)) } } },
+      setGenerationLimit: { isCapable: true, interventionIds: [], allowedRange: { kW: { min: 0, max: pvCapacity } } },
+      setExportLimit: { isCapable: true, interventionIds: [], allowedRange: { kW: { min: 0, max: pvCapacity } } },
       statistics: { isCapable: true, interventionIds: [], intervals: ["DAY", "MONTH", "YEAR"] },
       status: { isCapable: true, interventionIds: [] },
-    }
+    },
+    scopes: [
+      "meter:read:data",
+      "meter:read:location",
+      "battery:read:data",
+      "battery:read:location",
+      "battery:control:operation_mode",
+      "inverter:read:data",
+      "inverter:read:location",
+      "inverter:control:power_limit",
+    ],
   };
   document.getElementById('api-response').innerHTML = syntaxHighlight(json);
 }
